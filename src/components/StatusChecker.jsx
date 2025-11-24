@@ -11,10 +11,26 @@ export default function StatusChecker() {
   const [statusData, setStatusData] = useState(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
-  // Auto-populate jobId if passed from upload page
+  // Auto-populate jobId and results if passed from upload page
   useEffect(() => {
+    // Check if results were passed directly (sync mode)
+    if (location.state?.completed && location.state?.results) {
+      setStatusData({
+        '🎯 job_id': location.state.jobId,
+        '⏱️ status': 'completed',
+        '✅ message': 'Analysis completed successfully!',
+        '📊 analysis_result': location.state.results
+      });
+      setJobId(location.state.jobId);
+      return;
+    }
+
+    // Check if jobId was passed (async mode)
     if (location.state?.jobId) {
       setJobId(location.state.jobId);
+      // Auto-check status on load for async mode
+      checkStatusForJobId(location.state.jobId);
+      setAutoRefresh(true); // Start auto-refresh for async mode
     } else {
       // Try to get last job from localStorage
       const lastJob = localStorage.getItem('lastJobId');
@@ -25,7 +41,7 @@ export default function StatusChecker() {
   // Auto-refresh functionality
   useEffect(() => {
     let interval;
-    if (autoRefresh && jobId && statusData?.['⏱️ status'] !== 'completed') {
+    if (autoRefresh && jobId && statusData?.['⏱️ status'] !== 'completed' && statusData?.['⏱️ status'] !== 'failed') {
       interval = setInterval(() => {
         handleCheckStatus();
       }, 10000); // Check every 10 seconds
@@ -33,17 +49,12 @@ export default function StatusChecker() {
     return () => clearInterval(interval);
   }, [autoRefresh, jobId, statusData]);
 
-  const handleCheckStatus = async () => {
-    if (!jobId.trim()) {
-      setError('Please enter a job ID');
-      return;
-    }
-
+  const checkStatusForJobId = async (id) => {
     setLoading(true);
     setError(null);
 
     try {
-      const result = await checkStatus(jobId);
+      const result = await checkStatus(id);
       setStatusData(result);
       
       // Stop auto-refresh if completed or failed
@@ -51,11 +62,20 @@ export default function StatusChecker() {
         setAutoRefresh(false);
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to fetch status. Please check your job ID.');
+      setError(err.response?.data?.detail || 'Failed to fetch status.');
       console.error('Status check error:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCheckStatus = async () => {
+    if (!jobId.trim()) {
+      setError('Please enter a job ID');
+      return;
+    }
+
+    await checkStatusForJobId(jobId);
   };
 
   const getStatusBadge = (status) => {
@@ -64,6 +84,7 @@ export default function StatusChecker() {
       processing: 'bg-blue-100 text-blue-800',
       completed: 'bg-green-100 text-green-800',
       failed: 'bg-red-100 text-red-800',
+      pending: 'bg-gray-100 text-gray-800',
     };
     return badges[status] || 'bg-gray-100 text-gray-800';
   };
@@ -80,10 +101,11 @@ export default function StatusChecker() {
             onChange={(e) => setJobId(e.target.value)}
             placeholder="Enter Job ID (e.g., abc12345)"
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={location.state?.completed} // Disable if results already loaded
           />
           <button
             onClick={handleCheckStatus}
-            disabled={loading}
+            disabled={loading || location.state?.completed}
             className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition"
           >
             {loading ? 'Checking...' : 'Check Status'}
@@ -91,7 +113,7 @@ export default function StatusChecker() {
         </div>
 
         {/* Auto-refresh Toggle */}
-        {statusData && statusData['⏱️ status'] !== 'completed' && (
+        {statusData && statusData['⏱️ status'] !== 'completed' && statusData['⏱️ status'] !== 'failed' && (
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -127,6 +149,14 @@ export default function StatusChecker() {
               <div className="space-y-2 text-sm">
                 <p><span className="font-medium">Job ID:</span> {statusData['🎯 job_id']}</p>
                 <p><span className="font-medium">Message:</span> {statusData['✅ message'] || statusData.message}</p>
+                
+                {/* Show processing summary if available */}
+                {statusData.processing_summary && (
+                  <div className="mt-3 pt-3 border-t border-gray-300">
+                    <p><span className="font-medium">Processing Duration:</span> {statusData.processing_summary.processing_duration?.toFixed(2)} seconds</p>
+                    <p><span className="font-medium">Completed At:</span> {new Date(statusData.processing_summary.completed_at).toLocaleString()}</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -135,12 +165,33 @@ export default function StatusChecker() {
               <ResultsDisplay results={statusData['📊 analysis_result']} />
             )}
 
-            {/* Processing Message */}
-            {(statusData['⏱️ status'] === 'queued' || statusData['⏱️ status'] === 'processing') && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-blue-800">
-                  ⏳ Your analysis is being processed by our multi-agent AI system. This typically takes 5-15 minutes.
+            {/* Failed Message */}
+            {statusData['⏱️ status'] === 'failed' && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-red-800 font-medium">❌ Analysis Failed</p>
+                <p className="text-red-700 text-sm mt-2">
+                  {statusData['🐛 error_details'] || 'An error occurred during analysis.'}
                 </p>
+                <p className="text-red-600 text-sm mt-2">
+                  {statusData.retry_suggestion || 'Please try uploading the document again.'}
+                </p>
+              </div>
+            )}
+
+            {/* Processing Message */}
+            {(statusData['⏱️ status'] === 'queued' || statusData['⏱️ status'] === 'processing' || statusData['⏱️ status'] === 'pending') && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <div>
+                    <p className="text-blue-800 font-medium">
+                      ⏳ Your analysis is being processed by our multi-agent AI system.
+                    </p>
+                    <p className="text-blue-700 text-sm mt-1">
+                      This typically takes 5-15 minutes. Status will update automatically.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
