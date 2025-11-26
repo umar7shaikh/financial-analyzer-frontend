@@ -80,49 +80,52 @@ export default function StatusChecker() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      queued: 'bg-yellow-100 text-yellow-800',
-      processing: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
-      failed: 'bg-red-100 text-red-800',
-      pending: 'bg-gray-100 text-gray-800',
+      queued: 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-300',
+      processing: 'bg-blue-500/20 border border-blue-500/30 text-blue-300',
+      completed: 'bg-green-500/20 border border-green-500/30 text-green-300',
+      failed: 'bg-red-500/20 border border-red-500/30 text-red-300',
+      pending: 'bg-gray-500/20 border border-gray-500/30 text-gray-300',
     };
-    return badges[status] || 'bg-gray-100 text-gray-800';
+    return badges[status] || 'bg-gray-500/20 border border-gray-500/30 text-gray-300';
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white shadow-md rounded-lg p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black py-16 px-4">
+      <div className="max-w-4xl mx-auto bg-gray-900/50 backdrop-blur-md border border-gray-800/50 shadow-2xl rounded-2xl p-8 space-y-6">
         
         {/* Job ID Input */}
-        <div className="flex gap-4">
-          <input
-            type="text"
-            value={jobId}
-            onChange={(e) => setJobId(e.target.value)}
-            placeholder="Enter Job ID (e.g., abc12345)"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={location.state?.completed} // Disable if results already loaded
-          />
-          <button
-            onClick={handleCheckStatus}
-            disabled={loading || location.state?.completed}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition"
-          >
-            {loading ? 'Checking...' : 'Check Status'}
-          </button>
+        <div>
+          <label className="block text-gray-300 font-semibold mb-3">Check Analysis Status</label>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={jobId}
+              onChange={(e) => setJobId(e.target.value)}
+              placeholder="Enter Job ID (e.g., abc12345)"
+              className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              disabled={location.state?.completed}
+            />
+            <button
+              onClick={handleCheckStatus}
+              disabled={loading || location.state?.completed}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
+            >
+              {loading ? 'Checking...' : 'Check'}
+            </button>
+          </div>
         </div>
 
         {/* Auto-refresh Toggle */}
         {statusData && statusData['⏱️ status'] !== 'completed' && statusData['⏱️ status'] !== 'failed' && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
             <input
               type="checkbox"
               id="autoRefresh"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="w-4 h-4 text-blue-600"
+              className="w-5 h-5 accent-blue-500 cursor-pointer"
             />
-            <label htmlFor="autoRefresh" className="text-sm text-gray-700">
+            <label htmlFor="autoRefresh" className="text-sm text-gray-200 cursor-pointer">
               Auto-refresh every 10 seconds
             </label>
           </div>
@@ -130,31 +133,31 @@ export default function StatusChecker() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-lg backdrop-blur-sm">
             {error}
           </div>
         )}
 
         {/* Status Display */}
         {statusData && (
-          <div className="space-y-4">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-lg">Analysis Status</h3>
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusBadge(statusData['⏱️ status'])}`}>
+          <div className="space-y-6">
+            <div className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg text-white">Analysis Status</h3>
+                <span className={`px-4 py-2 rounded-full text-xs font-bold tracking-widest ${getStatusBadge(statusData['⏱️ status'])}`}>
                   {statusData['⏱️ status']?.toUpperCase()}
                 </span>
               </div>
               
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Job ID:</span> {statusData['🎯 job_id']}</p>
-                <p><span className="font-medium">Message:</span> {statusData['✅ message'] || statusData.message}</p>
+              <div className="space-y-3 text-sm text-gray-300">
+                <p><span className="font-semibold text-gray-200">Job ID:</span> <code className="bg-gray-900/50 px-2 py-1 rounded text-gray-100 text-xs">{statusData['🎯 job_id']}</code></p>
+                <p><span className="font-semibold text-gray-200">Message:</span> {statusData['✅ message'] || statusData.message}</p>
                 
                 {/* Show processing summary if available */}
                 {statusData.processing_summary && (
-                  <div className="mt-3 pt-3 border-t border-gray-300">
-                    <p><span className="font-medium">Processing Duration:</span> {statusData.processing_summary.processing_duration?.toFixed(2)} seconds</p>
-                    <p><span className="font-medium">Completed At:</span> {new Date(statusData.processing_summary.completed_at).toLocaleString()}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-700/50">
+                    <p><span className="font-semibold text-gray-200">Processing Duration:</span> {statusData.processing_summary.processing_duration?.toFixed(2)} seconds</p>
+                    <p><span className="font-semibold text-gray-200">Completed At:</span> {new Date(statusData.processing_summary.completed_at).toLocaleString()}</p>
                   </div>
                 )}
               </div>
@@ -167,12 +170,12 @@ export default function StatusChecker() {
 
             {/* Failed Message */}
             {statusData['⏱️ status'] === 'failed' && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-800 font-medium">❌ Analysis Failed</p>
-                <p className="text-red-700 text-sm mt-2">
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 backdrop-blur-sm">
+                <p className="text-red-300 font-bold text-lg mb-3">❌ Analysis Failed</p>
+                <p className="text-red-200 text-sm mb-2">
                   {statusData['🐛 error_details'] || 'An error occurred during analysis.'}
                 </p>
-                <p className="text-red-600 text-sm mt-2">
+                <p className="text-red-300 text-sm">
                   {statusData.retry_suggestion || 'Please try uploading the document again.'}
                 </p>
               </div>
@@ -180,14 +183,14 @@ export default function StatusChecker() {
 
             {/* Processing Message */}
             {(statusData['⏱️ status'] === 'queued' || statusData['⏱️ status'] === 'processing' || statusData['⏱️ status'] === 'pending') && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 backdrop-blur-sm">
+                <div className="flex items-center space-x-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500/30 border-t-blue-500 flex-shrink-0"></div>
                   <div>
-                    <p className="text-blue-800 font-medium">
+                    <p className="text-blue-300 font-semibold text-base">
                       ⏳ Your analysis is being processed by our multi-agent AI system.
                     </p>
-                    <p className="text-blue-700 text-sm mt-1">
+                    <p className="text-blue-400/70 text-sm mt-1">
                       This typically takes 5-15 minutes. Status will update automatically.
                     </p>
                   </div>
