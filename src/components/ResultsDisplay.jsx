@@ -32,21 +32,21 @@ export default function ResultsDisplay({ results }) {
 
   const getColorClasses = (color) => {
     const colors = {
-      blue: 'bg-blue-50 border-blue-200 text-blue-900',
-      purple: 'bg-purple-50 border-purple-200 text-purple-900',
-      green: 'bg-green-50 border-green-200 text-green-900',
-      yellow: 'bg-yellow-50 border-yellow-200 text-yellow-900',
-      indigo: 'bg-indigo-50 border-indigo-200 text-indigo-900',
+      blue: 'bg-blue-900 border-blue-700 text-blue-300',
+      purple: 'bg-purple-900 border-purple-700 text-purple-300',
+      green: 'bg-green-900 border-green-700 text-green-300',
+      yellow: 'bg-yellow-900 border-yellow-700 text-yellow-300',
+      indigo: 'bg-indigo-900 border-indigo-700 text-indigo-300',
     };
-    return colors[color] || 'bg-gray-50 border-gray-200 text-gray-900';
+    return colors[color] || 'bg-gray-900 border-gray-700 text-gray-300';
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">📊 Analysis Results</h2>
+    <div className="space-y-8 max-w-4xl mx-auto p-6 bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 rounded-3xl shadow-2xl border border-gray-700">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-extrabold text-white">📊 Analysis Results</h2>
         {results.confidence_rating && (
-          <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full font-semibold">
+          <span className="px-5 py-2 bg-green-700 text-green-100 rounded-full font-semibold tracking-wide shadow-sm select-none">
             Confidence: {results.confidence_rating}
           </span>
         )}
@@ -57,9 +57,12 @@ export default function ResultsDisplay({ results }) {
         if (!content) return null;
 
         return (
-          <div key={section.key} className={`border rounded-lg p-5 ${getColorClasses(section.color)}`}>
-            <h3 className="font-bold text-lg mb-3">{section.title}</h3>
-            <div className="prose prose-sm max-w-none">
+          <div
+            key={section.key}
+            className={`border-l-8 rounded-lg p-6 shadow-md ${getColorClasses(section.color)} transition-shadow duration-300 hover:shadow-lg`}
+          >
+            <h3 className="font-bold text-xl mb-4 text-white drop-shadow-md">{section.title}</h3>
+            <div className="prose prose-md max-w-none text-gray-100 prose-headings:text-white prose-links:text-blue-400 prose-links:hover:text-blue-500">
               <ReactMarkdown>{content}</ReactMarkdown>
             </div>
           </div>
