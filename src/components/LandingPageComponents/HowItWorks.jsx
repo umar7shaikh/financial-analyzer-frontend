@@ -22,17 +22,17 @@ const steps = [
 ];
 
 const HowItWorks = () => (
-  <section className="w-full bg-black py-20 px-4">
+  <section className="w-full bg-black py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
     <div className="max-w-7xl mx-auto text-center">
-      <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-4">How it works?</h2>
-      <p className="text-gray-300 text-lg max-w-xl mx-auto mb-12 font-normal">
+      <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">How it works?</h2>
+      <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-8 sm:mb-12 font-normal">
         Get instant financial insights from your documents in just three steps.
       </p>
 
-      <div className="grid md:grid-cols-3 gap-12 items-start"> {/* align from top to prevent uneven cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 items-start">
         {steps.map(({ img, title, description }, i) => (
           <div key={title} className="flex flex-col items-center transition hover:scale-[1.04]">
-            <div className="mb-8 relative w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full overflow-hidden flex items-center justify-center">
+            <div className="mb-6 sm:mb-8 relative w-[100px] sm:w-[120px] md:w-[140px] h-[100px] sm:h-[120px] md:h-[140px] rounded-full overflow-hidden flex items-center justify-center">
               {/* Blue-tinted overlay */}
               <img
                 src={img}
@@ -42,8 +42,8 @@ const HowItWorks = () => (
               />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-transparent to-black/70 opacity-80 z-20 pointer-events-none rounded-full"></div>
             </div>
-            <h3 className="text-white text-xl md:text-2xl font-bold mb-3">{title}</h3>
-            <p className="text-gray-400 text-base max-w-xs">{description}</p>
+            <h3 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3">{title}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm md:text-base max-w-xs">{description}</p>
           </div>
         ))}
       </div>

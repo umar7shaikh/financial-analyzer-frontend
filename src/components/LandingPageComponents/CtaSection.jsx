@@ -30,17 +30,17 @@ const CtaSection = () => (
     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/90"></div>
 
     {/* CTA CONTENT */}
-    <div className="relative z-10 w-full px-6 flex items-center justify-center">
+    <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 flex items-center justify-center">
       <div className="max-w-2xl text-center mx-auto">
-        <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-7 drop-shadow-lg">
+        <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-7 drop-shadow-lg">
           Ready to transform how you analyze financial documents?
         </h2>
-        <p className="text-blue-100 text-lg mb-8 font-medium">
+        <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium">
           Start in seconds—get multi-agent AI insights and market context with one free upload!
         </p>
         <a
           href="/signup"
-          className="bg-white hover:bg-blue-100 text-blue-800 font-bold px-10 py-4 rounded-full text-lg shadow-xl transition transform hover:scale-105"
+          className="inline-block bg-white hover:bg-blue-100 text-blue-800 font-bold px-8 sm:px-10 py-3 sm:py-4 rounded-full text-sm sm:text-lg shadow-xl transition transform hover:scale-105"
         >
           Get Started Free
         </a>

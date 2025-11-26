@@ -31,13 +31,13 @@ const LandingHero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70"></div>
 
       {/* CONTENT */}
-      <div className="relative z-10 min-h-screen w-full px-6 py-20 flex items-center">
+      <div className="relative z-10 min-h-screen w-full px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20 flex items-center">
         <div className="max-w-7xl mx-auto w-full">
           <div className="max-w-2xl">
             {/* HEADLINE with inline "Financial" badge */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-tight mb-6 sm:mb-8">
               AI-Powered{' '}
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-400 text-white px-6 py-2 rounded-full font-semibold text-4xl md:text-5xl shadow-lg">
+              <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-400 text-white px-4 sm:px-6 py-1 sm:py-2 rounded-full font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl shadow-lg">
                 Financial
               </span>{' '}
               Document Analyzer
@@ -46,37 +46,37 @@ const LandingHero = () => {
             {/* CTA BUTTON */}
             <button
               onClick={() => navigate('/signup')}
-              className="bg-white hover:bg-gray-100 text-black px-8 py-4 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105 mb-8"
+              className="bg-white hover:bg-gray-100 text-black px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base md:text-lg shadow-xl transition transform hover:scale-105 mb-6 sm:mb-8"
             >
               Start Analyzing Free
             </button>
 
             {/* DESCRIPTION */}
-            <p className="text-base md:text-lg text-gray-300 max-w-md leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-md leading-relaxed">
               Upload financial PDFs and get instant market insights, investment recommendations, and risk assessments powered by multi-agent AI.
             </p>
           </div>
         </div>
       </div>
 
-      {/* FLOATING BADGES - Same Blue Theme */}
+      {/* FLOATING BADGES - Same Blue Theme - Responsive visibility */}
       {/* Top Right */}
-      <div className="absolute top-[20%] right-[15%] bg-blue-600/80 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl border border-blue-400/30 transform rotate-3 animate-float">
+      <div className="hidden sm:block absolute top-[20%] right-[5%] md:right-[15%] bg-blue-600/80 backdrop-blur-md text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold shadow-2xl border border-blue-400/30 transform rotate-3 animate-float">
         Multi-Agent AI
       </div>
 
       {/* Middle Right */}
-      <div className="absolute top-[50%] right-[8%] bg-blue-600/80 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl border border-blue-400/30 transform -rotate-2 animate-float-delayed">
+      <div className="hidden md:block absolute top-[50%] right-[3%] md:right-[8%] bg-blue-600/80 backdrop-blur-md text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold shadow-2xl border border-blue-400/30 transform -rotate-2 animate-float-delayed">
         Real-Time Analysis
       </div>
 
       {/* Bottom Right */}
-      <div className="absolute bottom-[25%] right-[12%] bg-blue-600/80 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl border border-blue-400/30 transform rotate-1 animate-float">
+      <div className="hidden md:block absolute bottom-[25%] right-[5%] md:right-[12%] bg-blue-600/80 backdrop-blur-md text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold shadow-2xl border border-blue-400/30 transform rotate-1 animate-float">
         Verified Results
       </div>
 
       {/* Bottom Left */}
-      <div className="absolute bottom-[15%] left-[10%] bg-blue-600/80 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl border border-blue-400/30 transform -rotate-3 animate-float-delayed">
+      <div className="hidden lg:block absolute bottom-[15%] left-[3%] lg:left-[10%] bg-blue-600/80 backdrop-blur-md text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold shadow-2xl border border-blue-400/30 transform -rotate-3 animate-float-delayed">
         Market Insights
       </div>
     </div>

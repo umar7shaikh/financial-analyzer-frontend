@@ -35,7 +35,7 @@ const CARD_WIDTH = 340; // px
 
 const Features = () => {
   return (
-    <section className="relative w-full bg-[#191920] py-20">
+    <section className="relative w-full bg-[#191920] py-12 sm:py-16 md:py-20">
       {/* Subtle background radial gradient for depth */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 -z-10"
@@ -48,20 +48,20 @@ const Features = () => {
           opacity: 0.29,
         }}
       />
-      <div className="max-w-full px-0">
-        <div className="flex flex-col md:flex-row gap-8 items-start mb-8 px-8">
+      <div className="w-full px-4 sm:px-6 md:px-8">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-start mb-8 md:mb-12">
           {/* Left: Section Titles */}
-          <div className="md:w-2/5 flex flex-col justify-between min-w-[300px]">
-            <h2 className="text-white text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+          <div className="w-full md:w-2/5 flex flex-col justify-between">
+            <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
               One space to craft it all
             </h2>
-            <p className="text-gray-300 text-lg mb-8 md:mb-0">
+            <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8 md:mb-0">
               Effortlessly analyze complex PDFs and receive actionable financial insights, all in one tool.
             </p>
           </div>
 
           {/* Right: Enhanced Horizontal Carousel */}
-          <div className="md:w-3/5 overflow-x-auto scrollbar-hide relative">
+          <div className="w-full md:w-3/5 overflow-x-auto scrollbar-hide relative">
             <div
               className="flex gap-8 w-max snap-x snap-mandatory overflow-x-auto scrollbar-hide"
               style={{

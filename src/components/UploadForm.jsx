@@ -105,8 +105,8 @@ export default function UploadForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 p-3 md:p-6">
+      <div className="max-w-4xl mx-auto w-full px-2 sm:px-4 md:px-0">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="flex items-center justify-center mb-4">
@@ -122,10 +122,10 @@ export default function UploadForm() {
 
         {/* Main Card */}
         <div className="bg-gray-800/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 overflow-hidden">
-          <div className="p-8 space-y-6">
+          <div className="p-3 sm:p-6 md:p-8 space-y-6">
             {/* File Upload Zone */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+              <label className=" text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
                 <FileText className="w-4 h-4" />
                 Upload Document
               </label>
@@ -134,7 +134,7 @@ export default function UploadForm() {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 ${
+                className={`relative border-2 border-dashed rounded-2xl p-4 sm:p-8 transition-all duration-300 ${
                   dragActive
                     ? 'border-blue-500 bg-blue-500/10'
                     : file
@@ -178,7 +178,7 @@ export default function UploadForm() {
 
             {/* Query Input */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+              <label className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 Analysis Query
               </label>
@@ -188,7 +188,7 @@ export default function UploadForm() {
                 disabled={loading}
                 placeholder="E.g., Analyze Tesla's financial performance and provide investment recommendations with risk assessment..."
                 rows="4"
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition resize-none"
+                className="w-full px-2 py-2 sm:px-4 sm:py-3 bg-gray-700/50 border border-gray-600 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition resize-none"
               />
             </div>
 
@@ -196,7 +196,7 @@ export default function UploadForm() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-blue-500/50 flex items-center justify-center gap-3 group"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-2xl font-semibold hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-blue-500/50 flex items-center justify-center gap-3 group"
             >
               {loading ? (
                 <>
@@ -256,7 +256,7 @@ export default function UploadForm() {
                   <h3 className="font-bold text-white text-xl">Analysis Queued!</h3>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm text-white">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-white">
                   <div className="bg-gray-700/30 rounded-xl p-3">
                     <p className="text-gray-300 text-xs mb-1">Job ID</p>
                     <p className="font-mono text-xs truncate">{response['🎯 job_id'] || response.job_id}</p>
@@ -295,7 +295,7 @@ export default function UploadForm() {
                   <h3 className="font-bold text-white text-xl">Analysis Complete!</h3>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm text-white">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-white">
                   <div className="bg-gray-700/30 rounded-xl p-3">
                     <p className="text-gray-300 text-xs mb-1">Job ID</p>
                     <p className="font-mono text-xs truncate">{response['🎯 job_id'] || response.job_id}</p>
@@ -329,7 +329,7 @@ export default function UploadForm() {
           </div>
 
           {/* Features Footer */}
-          <div className="bg-gray-800/80 px-8 py-6 border-t border-gray-700/50">
+          <div className="bg-gray-800/80 px-2 sm:px-6 md:px-8 py-4 sm:py-6 border-t border-gray-700/50">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-3">
                 <div className="bg-blue-500/20 p-2 rounded-lg flex-shrink-0">
