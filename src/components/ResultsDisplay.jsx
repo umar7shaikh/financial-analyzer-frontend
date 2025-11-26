@@ -62,7 +62,7 @@ export default function ResultsDisplay({ results }) {
             className={`border-l-8 rounded-lg p-6 shadow-md ${getColorClasses(section.color)} transition-shadow duration-300 hover:shadow-lg border backdrop-blur-sm`}
           >
             <h3 className="font-bold text-xl mb-4 text-white drop-shadow-md">{section.title}</h3>
-            <div className="prose prose-md max-w-none text-gray-200 prose-headings:text-white prose-links:text-blue-400 prose-links:hover:text-blue-300">
+            <div className="prose prose-md max-w-none text-gray-200 prose-headings:text-white prose-strong:text-white prose-strong:font-bold prose-links:text-blue-400 prose-links:hover:text-blue-300 [&_strong]:text-white [&_strong]:font-semibold [&_h4]:text-gray-100 [&_h5]:text-gray-100 [&_em]:text-gray-300">
               <ReactMarkdown>{content}</ReactMarkdown>
             </div>
           </div>
