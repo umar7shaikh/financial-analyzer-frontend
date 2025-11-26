@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, FileText, Sparkles, Clock, CheckCircle, AlertCircle, TrendingUp, Shield, Zap } from 'lucide-react';
+import { uploadDocument } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function UploadForm() {
   const [file, setFile] = useState(null);
@@ -9,6 +11,7 @@ export default function UploadForm() {
   const [response, setResponse] = useState(null);
   const [processingMode, setProcessingMode] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChange = (selectedFile) => {
     if (selectedFile && selectedFile.type === 'application/pdf') {
@@ -23,9 +26,9 @@ export default function UploadForm() {
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -55,26 +58,50 @@ export default function UploadForm() {
     setProcessingMode(null);
 
     try {
-      // Replace with actual uploadDocument(file, query)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const result = {
-        '🎯 job_id': 'job_' + Math.random().toString(36).substr(2, 9),
-        '📄 file_processed': file.name,
-        '⏱️ status': 'completed',
-        '⏰ processing_time': '8.5 minutes',
-        processing_mode: 'sync',
-        '📊 analysis_result': { summary: 'Analysis complete' }
-      };
-      
+      const result = await uploadDocument(file, query);
       setResponse(result);
-      const mode = result.processing_mode || (result['⏱️ status'] === 'completed' ? 'sync' : 'async');
+
+      const status = result['⏱️ status'] || result.status;
+      const mode = result.processing_mode || (status === 'completed' ? 'sync' : 'async');
       setProcessingMode(mode);
-      
+
+      const jobId = result['🎯 job_id'] || result.job_id;
+      localStorage.setItem('lastJobId', jobId);
+
+      if (mode === 'sync' && status === 'completed') {
+        localStorage.setItem('lastResults', JSON.stringify(result['📊 analysis_result'] || result.analysis_result));
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Upload failed. Please try again.');
+      console.error('Upload error:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const goToStatus = () => {
+    const jobId = response['🎯 job_id'] || response.job_id;
+    if (processingMode === 'sync') {
+      navigate('/status', {
+        state: {
+          jobId,
+          completed: true,
+          results: response['📊 analysis_result'] || response.analysis_result,
+        },
+      });
+    } else {
+      navigate('/status', { state: { jobId } });
+    }
+  };
+
+  const viewResults = () => {
+    navigate('/status', {
+      state: {
+        jobId: response['🎯 job_id'] || response.job_id,
+        completed: true,
+        results: response['📊 analysis_result'] || response.analysis_result,
+      },
+    });
   };
 
   return (
@@ -96,7 +123,6 @@ export default function UploadForm() {
         {/* Main Card */}
         <div className="bg-gray-800/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 overflow-hidden">
           <div className="p-8 space-y-6">
-            
             {/* File Upload Zone */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
@@ -109,9 +135,9 @@ export default function UploadForm() {
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
                 className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 ${
-                  dragActive 
-                    ? 'border-blue-500 bg-blue-500/10' 
-                    : file 
+                  dragActive
+                    ? 'border-blue-500 bg-blue-500/10'
+                    : file
                     ? 'border-green-500 bg-green-500/5'
                     : 'border-gray-600 bg-gray-700/30 hover:border-gray-500'
                 }`}
@@ -123,7 +149,7 @@ export default function UploadForm() {
                   disabled={loading}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 />
-                
+
                 <div className="text-center pointer-events-none">
                   {file ? (
                     <div className="flex flex-col items-center gap-3">
@@ -132,9 +158,7 @@ export default function UploadForm() {
                       </div>
                       <div>
                         <p className="text-white font-medium">{file.name}</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          {(file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
+                        <p className="text-sm text-gray-400 mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                       </div>
                     </div>
                   ) : (
@@ -222,43 +246,83 @@ export default function UploadForm() {
               </div>
             )}
 
-            {/* Success Response */}
-            {response && (
-              <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-2xl p-6 space-y-4 animate-fade-in">
+            {/* Success Response - Async Mode (Queued) */}
+            {response && processingMode === 'async' && (
+              <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 space-y-4 animate-fade-in">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-green-500/20 p-2 rounded-xl">
                     <CheckCircle className="w-6 h-6 text-green-400" />
                   </div>
-                  <h3 className="font-bold text-white text-xl">
-                    {processingMode === 'sync' ? 'Analysis Complete!' : 'Analysis Queued!'}
-                  </h3>
+                  <h3 className="font-bold text-white text-xl">Analysis Queued!</h3>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
+
+                <div className="grid grid-cols-2 gap-4 text-sm text-white">
                   <div className="bg-gray-700/30 rounded-xl p-3">
-                    <p className="text-gray-400 text-xs mb-1">Job ID</p>
-                    <p className="text-white font-mono text-xs truncate">{response['🎯 job_id']}</p>
+                    <p className="text-gray-300 text-xs mb-1">Job ID</p>
+                    <p className="font-mono text-xs truncate">{response['🎯 job_id'] || response.job_id}</p>
                   </div>
                   <div className="bg-gray-700/30 rounded-xl p-3">
-                    <p className="text-gray-400 text-xs mb-1">Status</p>
-                    <p className="text-green-400 font-semibold">{response['⏱️ status']}</p>
+                    <p className="text-gray-300 text-xs mb-1">Status</p>
+                    <p className="text-green-400 font-semibold">{response['⏱️ status'] || response.status}</p>
                   </div>
                   <div className="bg-gray-700/30 rounded-xl p-3">
-                    <p className="text-gray-400 text-xs mb-1">File</p>
-                    <p className="text-white text-xs truncate">{response['📄 file_processed']}</p>
+                    <p className="text-gray-300 text-xs mb-1">File</p>
+                    <p className="truncate text-xs">{response['📄 file_processed'] || response.file_processed}</p>
                   </div>
                   <div className="bg-gray-700/30 rounded-xl p-3">
-                    <p className="text-gray-400 text-xs mb-1">Time</p>
-                    <p className="text-white text-xs">{response['⏰ processing_time'] || response['⏰ estimated_time']}</p>
+                    <p className="text-gray-300 text-xs mb-1">Estimated Time</p>
+                    <p className="text-xs">{response['⏰ estimated_time'] || response.estimated_time}</p>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => alert('Navigate to results page')}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-green-500/50 flex items-center justify-center gap-2"
+                  onClick={goToStatus}
+                  className="w-full bg-green-600 text-white py-3 px-6 rounded-2xl font-semibold hover:bg-green-700 transition"
                 >
-                  <span>{processingMode === 'sync' ? 'View Results' : 'Check Status'}</span>
-                  <TrendingUp className="w-4 h-4" />
+                  Check Status
+                  <TrendingUp className="w-5 h-5 ml-2 inline-block" />
+                </button>
+              </div>
+            )}
+
+            {/* Success Response - Sync Mode (Completed) */}
+            {response && processingMode === 'sync' && (
+              <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 space-y-4 animate-fade-in">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-green-500/20 p-2 rounded-xl">
+                    <CheckCircle className="w-6 h-6 text-green-400" />
+                  </div>
+                  <h3 className="font-bold text-white text-xl">Analysis Complete!</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm text-white">
+                  <div className="bg-gray-700/30 rounded-xl p-3">
+                    <p className="text-gray-300 text-xs mb-1">Job ID</p>
+                    <p className="font-mono text-xs truncate">{response['🎯 job_id'] || response.job_id}</p>
+                  </div>
+                  <div className="bg-gray-700/30 rounded-xl p-3">
+                    <p className="text-gray-300 text-xs mb-1">Status</p>
+                    <p className="text-green-400 font-semibold">{response['⏱️ status'] || response.status}</p>
+                  </div>
+                  <div className="bg-gray-700/30 rounded-xl p-3">
+                    <p className="text-gray-300 text-xs mb-1">File</p>
+                    <p className="truncate text-xs">{response['📄 file_processed'] || response.file_processed}</p>
+                  </div>
+                  <div className="bg-gray-700/30 rounded-xl p-3">
+                    <p className="text-gray-300 text-xs mb-1">Time</p>
+                    <p className="text-xs">{response['⏰ processing_time'] || response.processing_time}</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-md p-3 border border-green-300 text-green-700 text-sm">
+                  🎉 Your document has been analyzed! Results are ready to view.
+                </div>
+
+                <button
+                  onClick={viewResults}
+                  className="w-full bg-green-600 text-white py-3 px-6 rounded-2xl font-semibold hover:bg-green-700 transition"
+                >
+                  View Results
                 </button>
               </div>
             )}
