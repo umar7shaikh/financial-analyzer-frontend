@@ -4,7 +4,7 @@ import React from "react";
 const CTA_IMG =
   "https://images.unsplash.com/photo-1759885697855-52d11c41b19b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-const CtaSection = () => (
+const CtaSection = ({ openSignup }) => (
   <section className="relative min-h-[65vh] w-full bg-black flex items-center overflow-hidden">
     {/* BACKGROUND IMAGE */}
     <div
@@ -38,12 +38,12 @@ const CtaSection = () => (
         <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium">
           Start in seconds—get multi-agent AI insights and market context with one free upload!
         </p>
-        <a
-          href="/signup"
+        <button
+          onClick={openSignup}
           className="inline-block bg-white hover:bg-blue-100 text-blue-800 font-bold px-8 sm:px-10 py-3 sm:py-4 rounded-full text-sm sm:text-lg shadow-xl transition transform hover:scale-105"
         >
           Get Started Free
-        </a>
+        </button>
       </div>
     </div>
 
@@ -58,6 +58,3 @@ const CtaSection = () => (
 );
 
 export default CtaSection;
-
-
-

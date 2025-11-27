@@ -7,12 +7,13 @@ import Features from '../components/LandingPageComponents/Features';
 import CtaSection from '../components/LandingPageComponents/CtaSection';
 import Footer from '../components/CommonComponents/Footer';
 
+
 // Accept openLogin and openSignup as props from App.jsx
 const LandingPage = ({ openLogin, openSignup }) => {
   const navigate = useNavigate(); // Get router navigation function
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-screen w-full overflow-hidden">
       {/* Glass Nav overlaps */}
       <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20 w-[90vw] max-w-4xl">
         <Nav
@@ -24,7 +25,7 @@ const LandingPage = ({ openLogin, openSignup }) => {
       <LandingHero />
       <HowItWorks />
       <Features />
-      <CtaSection />
+      <CtaSection openSignup={openSignup} />
       <Footer />
     </div>
   );
